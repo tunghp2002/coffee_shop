@@ -1,7 +1,7 @@
 // icon:location | Tabler Icons https://tablericons.com/ | Csaba Kissi
 import * as React from 'react';
 
-function IconLocation(props) {
+function IconLocation(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       fill="none"

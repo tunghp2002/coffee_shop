@@ -1,7 +1,7 @@
 // icon:software-upload | CSS Icons https://css.gg/ | Astrit
 import * as React from 'react';
 
-function IconSoftwareUpload(props) {
+function IconSoftwareUpload(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg fill="none" viewBox="0 0 24 24" height="1em" width="1em" {...props}>
       <path
