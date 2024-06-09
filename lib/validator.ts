@@ -9,5 +9,4 @@ export const coffeeFormSchema = z.object({
   imageUrl: z.string(),
   categoryId: z.string(),
   price: z.string(),
-  url: z.string().url(),
 });

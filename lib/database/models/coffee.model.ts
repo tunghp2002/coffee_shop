@@ -7,9 +7,12 @@ export interface ICoffee extends Document {
   createdAt: Date;
   imageUrl: string;
   price: string;
-  url?: string;
   category: { _id: string; name: string };
   organizer: { _id: string; firstName: string; lastName: string };
+}
+
+export interface CartItem extends ICoffee {
+  quantity: number;
 }
 
 const CoffeeSchema = new Schema<ICoffee>({
@@ -18,7 +21,6 @@ const CoffeeSchema = new Schema<ICoffee>({
   createdAt: { type: Date, default: Date.now },
   imageUrl: { type: String, required: true },
   price: { type: String, required: true },
-  url: { type: String },
   category: { type: Schema.Types.ObjectId, ref: 'Category' },
   organizer: { type: Schema.Types.ObjectId, ref: 'User' },
 });

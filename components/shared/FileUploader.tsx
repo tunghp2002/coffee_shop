@@ -1,10 +1,8 @@
 'use client';
 
 import { useCallback, Dispatch, SetStateAction } from 'react';
-
 import { useDropzone } from '@uploadthing/react/hooks';
 import { generateClientDropzoneAccept } from 'uploadthing/client';
-
 import { Button } from '@/components/ui/button';
 import { convertFileToUrl } from '@/lib/utils';
 import IconSoftwareUpload from '@/public/assets/icons/IconSoftwareUpload';
@@ -27,7 +25,7 @@ export function FileUploader({
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
-    accept: 'image/*' ? generateClientDropzoneAccept(['image/*']) : undefined,
+    accept: generateClientDropzoneAccept(['image/*']),
   });
 
   return (
@@ -38,7 +36,7 @@ export function FileUploader({
       <input {...getInputProps()} className="cursor-pointer" />
 
       {imageUrl ? (
-        <div className="flex h-full w-full flex-1 justify-center ">
+        <div className="flex h-full w-full flex-1 justify-center">
           <img
             src={imageUrl}
             alt="image"
@@ -60,5 +58,3 @@ export function FileUploader({
     </div>
   );
 }
-
-export default FileUploader;

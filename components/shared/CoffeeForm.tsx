@@ -1,5 +1,4 @@
 'use client';
-
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -7,10 +6,8 @@ import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
@@ -18,27 +15,79 @@ import { coffeeFormSchema } from '@/lib/validator';
 import { coffeeDefaultValues } from '@/constants';
 import Dropdown from './Dropdown';
 import { Textarea } from '../ui/textarea';
-import FileUploader from './FileUploader';
+import { useUploadThing } from '@/lib/uploadthing';
 import { useState } from 'react';
 import IconMoneyDollarCircleLine from '@/public/assets/icons/IconMoneyDollarCircleLine';
-import IconLocation from '@/public/assets/icons/IconLocation';
+import { useRouter } from 'next/navigation';
+import { createCoffee, updateCoffee } from '@/lib/actions/coffee.actions';
+import { FileUploader } from './FileUploader';
+import { ICoffee } from '@/lib/database/models/coffee.model';
 
 type CoffeeFormProps = {
   userId: string;
   type: 'Create' | 'Update';
+  coffee?: ICoffee;
+  coffeeId?: string;
 };
 
-const CoffeeForm = ({ userId, type }: CoffeeFormProps) => {
+const CoffeeForm = ({ userId, type, coffee, coffeeId }: CoffeeFormProps) => {
   const [files, setFiles] = useState<File[]>([]);
-  const initialValues = coffeeDefaultValues;
+  const initialValues =
+    coffee && type === 'Update' ? { ...coffee } : coffeeDefaultValues;
+
+  const router = useRouter();
+  const { startUpload } = useUploadThing('imageUploader');
 
   const form = useForm<z.infer<typeof coffeeFormSchema>>({
     resolver: zodResolver(coffeeFormSchema),
     defaultValues: initialValues,
   });
 
-  function onSubmit(values: z.infer<typeof coffeeFormSchema>) {
+  async function onSubmit(values: z.infer<typeof coffeeFormSchema>) {
     console.log(values);
+    let uploadedImageUrl = values.imageUrl;
+    if (files.length > 0) {
+      const uploadedImages = await startUpload(files);
+      if (!uploadedImages) {
+        return;
+      }
+      uploadedImageUrl = uploadedImages[0].url;
+    }
+    if (type === 'Create') {
+      try {
+        const newCoffee = await createCoffee({
+          coffee: { ...values, imageUrl: uploadedImageUrl },
+          userId,
+          path: '/profile',
+        });
+        if (newCoffee) {
+          form.reset();
+          router.push(`/coffee/${newCoffee._id}`);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    if (type === 'Update') {
+      if (!coffeeId) {
+        router.back();
+        return;
+      }
+      try {
+        const updatedCoffee = await updateCoffee({
+          userId,
+          coffee: { ...values, imageUrl: uploadedImageUrl, _id: coffeeId },
+          path: `/coffee/${coffeeId}`,
+        });
+        if (updatedCoffee) {
+          form.reset();
+          router.push(`/coffee/${updatedCoffee._id}`);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
   }
   return (
     <Form {...form}>
@@ -144,7 +193,7 @@ const CoffeeForm = ({ userId, type }: CoffeeFormProps) => {
           disabled={form.formState.isSubmitting}
           className="button col-span-2 w-full"
         >
-          {form.formState.isSubmitting ? 'Submitting...' : `${type} Coffee`}
+          {form.formState.isSubmitting ? 'Submitting...' : `${type} Coffee `}
         </Button>
       </form>
     </Form>

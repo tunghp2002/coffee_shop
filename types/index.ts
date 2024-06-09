@@ -93,6 +93,7 @@ export type CheckoutOrderParams = {
   coffeeTitle: string;
   coffeeId: string;
   price: string;
+  quantity: string,
   buyerId: string;
 };
 

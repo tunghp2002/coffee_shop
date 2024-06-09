@@ -1,7 +1,8 @@
 import { Webhook } from 'svix';
 import { headers } from 'next/headers';
-import { WebhookEvent, clerkClient } from '@clerk/nextjs/server';
-import { createUser, updateUser, deleteUser } from '@/lib/actions/user.actions';
+import { WebhookEvent } from '@clerk/nextjs/server';
+import { createUser, deleteUser, updateUser } from '@/lib/actions/user.actions';
+import { clerkClient } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
@@ -19,7 +20,9 @@ export async function POST(req: Request) {
   const svix_signature = headerPayload.get('svix-signature');
 
   if (!svix_id || !svix_timestamp || !svix_signature) {
-    return new Response('Error occured -- no svix headers', { status: 400 });
+    return new Response('Error occured -- no svix headers', {
+      status: 400,
+    });
   }
 
   const payload = await req.json();
@@ -37,21 +40,24 @@ export async function POST(req: Request) {
     }) as WebhookEvent;
   } catch (err) {
     console.error('Error verifying webhook:', err);
-    return new Response('Error occured', { status: 400 });
+    return new Response('Error occured', {
+      status: 400,
+    });
   }
 
+  const { id } = evt.data;
   const eventType = evt.type;
-  console.log('Event Type:', eventType);
 
-  if (eventType == 'user.created') {
+  if (eventType === 'user.created') {
     const { id, email_addresses, image_url, first_name, last_name, username } =
       evt.data;
+
     const user = {
       clerkId: id,
       email: email_addresses[0].email_address,
       username: username!,
-      firstName: first_name!,
-      lastName: last_name!,
+      firstName: first_name,
+      lastName: last_name,
       photo: image_url,
     };
 
@@ -64,16 +70,17 @@ export async function POST(req: Request) {
         },
       });
     }
+
     return NextResponse.json({ message: 'OK', user: newUser });
   }
 
-  if (eventType == 'user.updated') {
+  if (eventType === 'user.updated') {
     const { id, image_url, first_name, last_name, username } = evt.data;
+
     const user = {
-      clerkId: id,
+      firstName: first_name,
+      lastName: last_name,
       username: username!,
-      firstName: first_name!,
-      lastName: last_name!,
       photo: image_url,
     };
 
@@ -82,7 +89,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ message: 'OK', user: updatedUser });
   }
 
-  if (eventType == 'user.deleted') {
+  if (eventType === 'user.deleted') {
     const { id } = evt.data;
 
     const deletedUser = await deleteUser(id!);
