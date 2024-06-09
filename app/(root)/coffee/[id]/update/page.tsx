@@ -2,7 +2,7 @@ import CoffeeForm from '@/components/shared/CoffeeForm';
 import { getCoffeeById } from '@/lib/actions/coffee.actions';
 import { auth } from '@clerk/nextjs/server';
 
-type UpdateEventProps = {
+type UpdateCoffeeProps = {
   params: {
     id: string;
   };

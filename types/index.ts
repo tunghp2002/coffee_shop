@@ -93,13 +93,13 @@ export type CheckoutOrderParams = {
   coffeeTitle: string;
   coffeeId: string;
   price: string;
-  quantity: string,
+  quantity: string;
   buyerId: string;
 };
 
 export type CreateOrderParams = {
   stripeId: string;
-  coffeeId: string;
+  coffeeId: string[];
   buyerId: string;
   totalAmount: string;
   createdAt: Date;

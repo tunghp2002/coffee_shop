@@ -4,25 +4,16 @@ export interface IOrder extends Document {
   createdAt: Date;
   stripeId: string;
   totalAmount: string;
-  coffee: {
+  coffee: Array<{
     _id: string;
     title: string;
-  };
+  }>;
   buyer: {
     _id: string;
     firstName: string;
     lastName: string;
   };
 }
-
-export type IOrderItem = {
-  _id: string;
-  totalAmount: string;
-  createdAt: Date;
-  coffeeTitle: string;
-  coffeeId: string;
-  buyer: string;
-};
 
 const OrderSchema = new Schema({
   createdAt: {
@@ -37,18 +28,18 @@ const OrderSchema = new Schema({
   totalAmount: {
     type: String,
   },
-  coffee: {
-    type: Schema.Types.ObjectId,
-    size: Schema.Types.ObjectId,
-    amount: Number,
-    ref: 'Coffee',
-  },
+  coffee: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Coffee',
+    },
+  ],
   buyer: {
     type: Schema.Types.ObjectId,
     ref: 'User',
   },
 });
 
-const Order = models.Order || model('Order', OrderSchema);
+const Order = models.Order || model<IOrder>('Order', OrderSchema);
 
 export default Order;
