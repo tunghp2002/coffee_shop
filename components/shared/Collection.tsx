@@ -1,6 +1,7 @@
 import { ICoffee } from '@/lib/database/models/coffee.model';
 import React from 'react';
 import Card from './Card';
+import Pagination from './Pagination';
 
 type CollectionProps = {
   data: ICoffee[];
@@ -21,6 +22,8 @@ const Collection = ({
   totalPages = 0,
   urlParamName,
 }: CollectionProps) => {
+  console.log(`Rendering Collection with page ${page} of ${totalPages}`); // Debugging
+
   return (
     <>
       {data.length > 0 ? (
@@ -34,6 +37,13 @@ const Collection = ({
               );
             })}
           </ul>
+          {totalPages > 1 && (
+            <Pagination
+              urlParamName={urlParamName}
+              page={page}
+              totalPages={totalPages}
+            />
+          )}
         </div>
       ) : (
         <div className="flex-center wrapper min-h-[200px] w-full flex-col gap-3 rounded-[14px] bg-gray-50 py-28 text-center">

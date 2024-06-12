@@ -9,7 +9,7 @@ import { addToCart } from '@/store/cartSlice';
 
 type CoffeeDetailsProps = {
   coffee: ICoffee;
-  relatedCoffee: { data: ICoffee[] };
+  relatedCoffee: { data: ICoffee[]; totalPages: number; page: number };
 };
 
 const CoffeeDetails = ({ coffee, relatedCoffee }: CoffeeDetailsProps) => {
@@ -54,12 +54,13 @@ const CoffeeDetails = ({ coffee, relatedCoffee }: CoffeeDetailsProps) => {
       <section className="wrapper my-8 flex flex-col gap-8 md:gap-12">
         <h2 className="h2-bold">Related Coffee</h2>
         <Collection
-          data={relatedCoffee.data}
+          data={relatedCoffee?.data}
           emptyTitle="No Coffee Found"
           emptyStateSubtext="Come back later"
           limit={6}
-          page={1}
-          totalPages={2}
+          page={relatedCoffee.page}
+          totalPages={relatedCoffee.totalPages}
+          urlParamName="page"
         />
       </section>
     </>

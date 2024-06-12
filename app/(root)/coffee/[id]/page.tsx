@@ -16,7 +16,14 @@ const CoffeeDetailsPage = async ({
     page: searchParams.page as string,
   });
 
-  return <CoffeeDetails coffee={coffee} relatedCoffee={relatedCoffee} />;
+  const relatedCoffeeWithPage = {
+    ...relatedCoffee,
+    page: searchParams.page ? Number(searchParams.page) : 1,
+  };
+
+  return (
+    <CoffeeDetails coffee={coffee} relatedCoffee={relatedCoffeeWithPage} />
+  );
 };
 
 export default CoffeeDetailsPage;
