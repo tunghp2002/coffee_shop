@@ -90,16 +90,27 @@ export type CreateCategoryParams = {
 
 // ====== ORDER PARAMS
 export type CheckoutOrderParams = {
-  coffeeTitle: string;
-  coffeeId: string;
-  price: string;
-  quantity: string;
+  coffee: {
+    coffeeId: string;
+    title: string;
+    quantity: string;
+    price: string;
+    totalCoffeeAmount: string;
+  }[];
   buyerId: string;
+  totalAmount: string;
+  createdAt: Date;
 };
 
 export type CreateOrderParams = {
   stripeId: string;
-  coffeeId: string[];
+  coffee: {
+    coffeeId: string;
+    title: string;
+    quantity: string;
+    price: string;
+    totalCoffeeAmount: string;
+  }[];
   buyerId: string;
   totalAmount: string;
   createdAt: Date;

@@ -1,14 +1,10 @@
-import { ICoffee } from '@/lib/database/models/coffee.model';
+import { CartItem } from '@/lib/database/models/coffee.model';
 import { SignedOut, SignedIn, useUser } from '@clerk/nextjs';
 import { Button } from '../ui/button';
 import Checkout from './Checkout';
 import Link from 'next/link';
 
-type CheckoutButtonProps = {
-  cart: ICoffee[];
-};
-
-const CheckoutButton = ({ cart }: CheckoutButtonProps) => {
+const CheckoutButton = ({ cart }: { cart: CartItem }) => {
   const { user } = useUser();
   const userId = user?.publicMetadata.userId as string;
 

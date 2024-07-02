@@ -108,7 +108,7 @@ export const getAllCoffee = async ({
 export const deleteCoffee = async ({ coffeeId, path }: DeleteCoffeeParams) => {
   try {
     await connectToDatabase();
-    const deleteCoffee = await Coffee.findByIdAndDelete(coffeeId);
+    const deletecdCoffee = await Coffee.findByIdAndDelete(coffeeId);
     if (!deleteCoffee) revalidatePath(path);
   } catch (error) {
     handleError(error);

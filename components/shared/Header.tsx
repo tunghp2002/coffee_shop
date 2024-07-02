@@ -11,7 +11,8 @@ import { RootState } from '@/store';
 
 const Header = () => {
   const { isSignedIn, user } = useUser();
-  const cart = useSelector((state: RootState) => state.cart);
+  const cart = useSelector((state: RootState) => state.cart) || [];
+
   const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
 
   return (

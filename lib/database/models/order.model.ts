@@ -5,14 +5,13 @@ export interface IOrder extends Document {
   stripeId: string;
   totalAmount: string;
   coffee: Array<{
-    _id: string;
+    coffeeId: string;
     title: string;
+    quantity: string;
+    price: string;
+    totalCoffeeAmount: string;
   }>;
-  buyer: {
-    _id: string;
-    firstName: string;
-    lastName: string;
-  };
+  buyerId: string;
 }
 
 const OrderSchema = new Schema({
@@ -27,19 +26,38 @@ const OrderSchema = new Schema({
   },
   totalAmount: {
     type: String,
+    required: true,
   },
   coffee: [
     {
-      type: Schema.Types.ObjectId,
-      ref: 'Coffee',
+      coffeeId: {
+        type: String,
+        required: true,
+      },
+      title: {
+        type: String,
+        required: true,
+      },
+      quantity: {
+        type: String,
+        required: true,
+      },
+      price: {
+        type: String,
+        required: true,
+      },
+      totalCoffeeAmount: {
+        type: String,
+        required: true,
+      },
     },
   ],
-  buyer: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
+  buyerId: {
+    type: String,
+    required: true,
   },
 });
 
-const Order = models.Order || model<IOrder>('Order', OrderSchema);
+const Order = models?.Order || model<IOrder>('Order', OrderSchema);
 
 export default Order;

@@ -3,15 +3,18 @@ import { Button } from '../ui/button';
 import { loadStripe } from '@stripe/stripe-js';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
-import { ICoffeeWithQuantity } from '@/store/cartSlice';
-import { checkoutOrder } from '@/lib/actions/order.actions';
+import { checkoutOrder, createOrder } from '@/lib/actions/order.actions';
+import { CartItem } from '@/lib/database/models/coffee.model';
 
 loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
-const Checkout = ({ userId }: { userId: string }) => {
-  const cart = useSelector(
-    (state: RootState) => state.cart
-  ) as ICoffeeWithQuantity[];
+type CheckoutProps = {
+  cart: CartItem[];
+  userId: string;
+};
+
+const Checkout = ({ cart, userId }: CheckoutProps) => {
+  const cartItems = useSelector((state: RootState) => state.cart) as CartItem[];
 
   useEffect(() => {
     const query = new URLSearchParams(window.location.search);
@@ -28,14 +31,27 @@ const Checkout = ({ userId }: { userId: string }) => {
 
   const onCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
-    const order = cart.map((item) => ({
-      coffeeTitle: item.title,
-      coffeeId: item._id,
-      price: item.price,
-      quantity: item.quantity,
+    const order = {
+      coffee: cart.map((item) => ({
+        coffeeId: item._id,
+        title: item.title,
+        quantity: Number(item.quantity).toString(),
+        price: Number(item.price).toString(),
+        totalCoffeeAmount: (
+          Number(item.quantity) * Number(item.price)
+        ).toString(),
+      })),
       buyerId: userId,
-    }));
+      totalAmount: cart
+        .reduce(
+          (total, item) => total + Number(item.price) * Number(item.quantity),
+          0
+        )
+        .toString(),
+      createdAt: new Date(),
+    };
+    console.log(order);
+
     await checkoutOrder(order);
   };
 

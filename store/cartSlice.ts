@@ -1,11 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { ICoffee } from '@/lib/database/models/coffee.model';
+import { CartItem, ICoffee } from '@/lib/database/models/coffee.model';
 
-export interface ICoffeeWithQuantity extends ICoffee {
-  quantity: number;
-}
-
-type CartState = ICoffeeWithQuantity[];
+type CartState = CartItem[];
 
 const initialState: CartState = [];
 

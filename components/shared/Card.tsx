@@ -12,7 +12,7 @@ import IconHeart from '@/public/assets/icons/IconHeart';
 import IconHeartFill from '@/public/assets/icons/IconHeartFill';
 import { useUser } from '@clerk/clerk-react';
 
-type CardProps = {
+type CardProps = {  
   coffee: ICoffee;
 };
 

@@ -18,27 +18,51 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: 'Webhook error', error: err });
   }
 
-  // Get the ID and type
   const eventType = event.type;
-
-  // CREATE
+  console.log(eventType);
   if (eventType === 'checkout.session.completed') {
-    const { id, amount_total, metadata } = event.data.object;
+    const session = event.data.object as Stripe.Checkout.Session;
+    const { id, amount_total, metadata } = session;
+
+    const coffeeIds = metadata?.coffeeId ? metadata.coffeeId.split(',') : [];
+    const coffeeTitles = metadata?.coffeeTitle
+      ? metadata.coffeeTitle.split(',')
+      : [];
+    const coffeePrices = metadata?.coffeePrice
+      ? metadata.coffeePrice.split(',')
+      : [];
+    const coffeeQuantities = metadata?.coffeeQuantity
+      ? metadata.coffeeQuantity.split(',')
+      : [];
+    const coffeeTotalAmounts = metadata?.coffeeTotalAmount
+      ? metadata.coffeeTotalAmount.split(',')
+      : [];
+
+    const coffee = coffeeIds.map((coffeeId: string, index: number) => ({
+      coffeeId,
+      title: coffeeTitles[index] || `Coffee ${index + 1}`,
+      quantity: coffeeQuantities[index] || '1',
+      price: coffeePrices[index] || '0',
+      totalCoffeeAmount: coffeeTotalAmounts[index] || '0',
+    }));
 
     const order = {
       stripeId: id,
-      coffeeId: metadata?.coffeeId ? metadata.coffeeId.split(',') : [],
+      coffee,
       buyerId: metadata?.buyerId || '',
       totalAmount: amount_total ? (amount_total / 100).toString() : '0',
       createdAt: new Date(),
     };
-
+    console.log(order);
     try {
       const newOrder = await createOrder(order);
       return NextResponse.json({ message: 'OK', order: newOrder });
     } catch (error) {
       console.error('Error creating order in webhook:', error);
-      return NextResponse.json({ message: 'Error creating order', error });
+      return NextResponse.json({
+        message: 'Error creating order',
+        error: error,
+      });
     }
   }
 

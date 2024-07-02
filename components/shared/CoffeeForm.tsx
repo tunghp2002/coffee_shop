@@ -44,7 +44,6 @@ const CoffeeForm = ({ userId, type, coffee, coffeeId }: CoffeeFormProps) => {
   });
 
   async function onSubmit(values: z.infer<typeof coffeeFormSchema>) {
-    console.log(values);
     let uploadedImageUrl = values.imageUrl;
     if (files.length > 0) {
       const uploadedImages = await startUpload(files);
